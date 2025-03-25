@@ -1,0 +1,6 @@
+plugins:
+  - id: ros_camera_server.camera_server
+    name: "ROS Camera Server"
+    group: "Video"
+    path: "share/@PROJECT_NAME@/qml/CameraServer.qml"
+    single_instance: false

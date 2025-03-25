@@ -1,0 +1,2 @@
+module Ros2.CameraServer
+plugin ros_camera_server_qml

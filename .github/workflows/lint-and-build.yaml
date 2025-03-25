@@ -1,0 +1,87 @@
+name: Lint, Build & Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+defaults:
+  run:
+    shell: bash
+jobs:
+  Linting:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup
+      run: |
+        sudo apt-get update && sudo apt-get install -y clang-format cppcheck libxml2-utils
+    - name: Lint C++
+      run: |
+        clang-format -Werror -n -style=file $(find . -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.c' -o -name '*.cc')
+    - name: Check C++
+      run: |
+        cppcheck --force --library=qt --quiet --inline-suppr --error-exitcode=1 --language=c++ $(find . -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.c' -o -name '*.cc')
+    - name: Lint package.xml
+      run: |
+        xmllint --noout --schema <(curl -sf http://download.ros.org/schema/package_format3.xsd) $(find . -name 'package.xml')
+
+  build-and-test:
+    needs: Linting
+    runs-on: ${{ matrix.setup.os }}
+    container:
+      image: ros:${{ matrix.setup.rosdistro }}-ros-base
+    strategy:
+      matrix:
+        setup:
+        - rosdistro: jazzy
+          os: ubuntu-24.04
+        - rosdistro: lyrical
+          os: ubuntu-26.04
+    steps:
+    - name: install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ros-dev-tools
+    - uses: actions/checkout@v4
+      with:
+        path: src/ros_camera_server_qml
+    - uses: actions/checkout@v4
+      with:
+        repository: StefanFabian/ros_camera_server
+        path: src/ros_camera_server
+    - uses: actions/checkout@v4
+      with:
+        repository: StefanFabian/gstreamer_ros_babel_fish
+        path: src/gstreamer_ros_babel_fish
+    - uses: actions/checkout@v4
+      with:
+        repository: StefanFabian/qml6_ros2_plugin
+        path: src/qml6_ros2_plugin
+        ref: ${{ matrix.setup.rosdistro }}
+    - uses: actions/checkout@v4
+      with:
+        repository: StefanFabian/qml_ros2_plugin
+        path: src/qml_ros2_plugin
+        ref: ${{ matrix.setup.rosdistro }}
+    - uses: actions/checkout@v4
+      with:
+        repository: StefanFabian/rqml
+        path: src/rqml
+    - name: rosdep
+      run: |
+        rosdep update --rosdistro ${{ matrix.setup.rosdistro }} --include-eol-distros
+        rosdep install -y --from-paths src --ignore-src --rosdistro ${{ matrix.setup.rosdistro }}
+    - name: build
+      run: |
+        source /opt/ros/${{ matrix.setup.rosdistro }}/setup.bash
+        colcon build --packages-up-to ros_camera_server_qml ros_camera_server_qml6
+    - name: test
+      run: |
+        source /opt/ros/${{ matrix.setup.rosdistro }}/setup.bash
+        source install/setup.bash
+        colcon test --packages-select ros_camera_server_qml ros_camera_server_qml6
+        colcon test-result --verbose

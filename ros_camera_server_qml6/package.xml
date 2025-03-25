@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ros_camera_server_qml6</name>
+  <version>0.0.0</version>
+  <description>QML wrapper for the ROS Camera Server.</description>
+  <maintainer email="fabian@sim.tu-darmstadt.de">Stefan Fabian</maintainer>
+  <license>MIT</license>
+  <author email="fabian@sim.tu-darmstadt.de">Stefan Fabian</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>libgstreamer-plugins-bad1.0-dev</build_depend>
+  <build_depend>libgstreamer-plugins-base1.0-dev</build_depend>
+  <build_depend>libgstreamer1.0-dev</build_depend>
+  <build_depend>qt6-base-dev</build_depend>
+  <build_depend>qt6-declarative-dev</build_depend>
+  <build_depend>qt6-multimedia-dev</build_depend>
+  <build_depend>qt6-websockets-dev</build_depend>
+
+  <depend>qml6_ros2_plugin</depend>
+  <depend>ros_camera_server_msgs</depend>
+
+  <exec_depend>compressed_image_transport</exec_depend>
+  <exec_depend>gstreamer1.0</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-bad</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-base</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-good</exec_depend>
+  <exec_depend>libqt6-core</exec_depend>
+  <exec_depend>libqt6-multimedia</exec_depend>
+  <exec_depend>libqt6-qml</exec_depend>
+  <exec_depend>libqt6-quick</exec_depend>
+  <exec_depend>libqt6-websockets</exec_depend>
+  <exec_depend>qml6-module-qtmultimedia</exec_depend>
+  <exec_depend>qml6-module-qtquick-controls</exec_depend>
+  <exec_depend>qml6-module-qtquick-dialogs</exec_depend>
+  <exec_depend>qml6-module-qtquick-layouts</exec_depend>
+  <exec_depend>rqml_core</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
